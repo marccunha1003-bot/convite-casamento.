@@ -3,66 +3,113 @@ const btnNao = document.querySelector(".nao");
 const resultado = document.querySelector("#resultado");
 const nome = document.querySelector("#nomeConvidado");
 
+
 const URL =
 "https://script.google.com/macros/s/AKfycbzTIYBFdUwgdSwzf7sflXRRhCrcRZi1J5xqEEd7GpvEKf5b02eMOR8nb3pdKB8WYnMX/exec";
 
-async function enviar(resposta){
 
-    if(nome.value.trim()==""){
+async function enviar(resposta) {
+
+    if (nome.value.trim() === "") {
 
         alert("Por favor, informe seu nome.");
+
         return;
 
     }
 
-    const dados={
 
-        nome:nome.value,
-        resposta:resposta
+    const dados = {
+
+        nome: nome.value.trim(),
+
+        resposta: resposta
 
     };
 
-    try{
 
-        const respostaServidor = await fetch(URL,{
-            method:"POST",
-            body:JSON.stringify(dados)
+    try {
+
+        const respostaServidor = await fetch(URL, {
+
+            method: "POST",
+
+            body: JSON.stringify(dados)
+
         });
 
-        const texto = await respostaServidor.text();
 
-        console.log(texto);
+        const resultadoServidor =
+            await respostaServidor.json();
 
-        resultado.innerHTML=`
-        ❤️<br><br>
-        Obrigado, <strong>${nome.value}</strong>!<br><br>
-        Sua resposta foi registrada com sucesso.<br><br>
-        Por favor, confirme apenas uma vez.🙏
-        `;
 
-        btnSim.disabled=true;
-        btnNao.disabled=true;
+        // Nome já registrado
+        if (resultadoServidor.status === "duplicado") {
 
-    }catch(erro){
+            resultado.innerHTML = `
+                ⚠️<br><br>
+                <strong>Este nome já possui uma confirmação.</strong>
+                <br><br>
+                Não é possível confirmar novamente.
+            `;
 
-        console.log(erro);
+            return;
 
-        resultado.innerHTML=`
-        ❌<br><br>
-        Ocorreu um erro ao enviar sua resposta.
+        }
+
+
+        // Resposta registrada
+        if (resultadoServidor.status === "ok") {
+
+            resultado.innerHTML = `
+                ❤️<br><br>
+                Obrigado, <strong>${nome.value}</strong>!<br><br>
+                Sua resposta foi registrada com sucesso.
+            `;
+
+
+            btnSim.disabled = true;
+
+            btnNao.disabled = true;
+
+            nome.disabled = true;
+
+        }
+
+
+        // Erro retornado pelo Apps Script
+        if (resultadoServidor.status === "erro") {
+
+            resultado.innerHTML = `
+                ❌<br><br>
+                ${resultadoServidor.mensagem}
+            `;
+
+        }
+
+
+    } catch (erro) {
+
+        console.error(erro);
+
+        resultado.innerHTML = `
+            ❌<br><br>
+            Ocorreu um erro ao enviar sua resposta.
         `;
 
     }
 
 }
 
-btnSim.addEventListener("click",function(){
+
+btnSim.addEventListener("click", function() {
 
     enviar("Sim");
 
 });
 
-btnNao.addEventListener("click",function(){
+
+btnNao.addEventListener("click", function() {
 
     enviar("Não");
 
