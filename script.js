@@ -4,7 +4,7 @@ const resultado = document.querySelector("#resultado");
 const nome = document.querySelector("#nomeConvidado");
 
 const URL =
-"https://script.google.com/macros/s/AKfycbzTIYBFdUwgdSwzf7sflXRRhCrcRZi1J5xqEEd7GpvEKf5b02eMOR8nb3pdKB8WYnMX/exec";
+"https://script.google.com/macros/s/AKfycbwWONPnCIvYGO5Lyn6eZ2a1-8Q7Wy4GrX5e3CudQ84Mu0TSgIuV6gulKFJbarwnYEFI/exec";
 
 async function enviar(resposta){
 
@@ -36,7 +36,8 @@ async function enviar(resposta){
         resultado.innerHTML=`
         ❤️<br><br>
         Obrigado, <strong>${nome.value}</strong>!<br><br>
-        Sua resposta foi registrada com sucesso.
+        Sua resposta foi registrada com sucesso.<br><br>
+        Por favor, confirme apenas uma vez.🙏
         `;
 
         btnSim.disabled=true;
